@@ -4,48 +4,82 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusText = document.getElementById('status-text');
     const totalClicksCountEl = document.getElementById('total-clicks-count');
 
-    const eventSourceUrl = API_BASE_URL + `clicks/stats`;
-    const eventSource = new EventSource(eventSourceUrl);
+    const baseUrl = API_BASE_URL + `clicks/stats`;
+    let es = null;
+    let reconnectAttempts = 0;
+    let reconnectTimer = null;
+
+    function getUrlWithCacheBuster() {
+        const sep = baseUrl.includes('?') ? '&' : '?';
+        return `${baseUrl}${sep}t=${Date.now()}`;
+    }
+
+    function connect() {
+        // Clear any pending timer
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+        }
+        // Create a fresh EventSource with a cache-buster to dodge any intermediary caching
+        es = new EventSource(getUrlWithCacheBuster());
+
+        es.onopen = function() {
+            console.log("Connection to SSE stream opened.");
+            statusLight.classList.add('connected');
+            statusText.textContent = 'Connecting...';
+            reconnectAttempts = 0; // reset backoff on success
+        };
+
+        es.addEventListener('stats_update', function(event) {
+            statusText.textContent = 'Live';
+            const data = JSON.parse(event.data);
+            const newDataStore = {};
+            let newTotalClicks = 0;
+            const incomingKeys = new Set();
+
+            data.forEach(item => {
+                const key = `${item.user_id}-${item.button_id}`;
+                newDataStore[key] = item;
+                newTotalClicks += parseInt(item.click_count, 10);
+                incomingKeys.add(key);
+            });
+
+            clickDataStore = newDataStore;
+            totalClicks = newTotalClicks;
+            renderOrUpdateCards(incomingKeys);
+        });
+
+        es.onerror = function(err) {
+            console.error("EventSource error:", err);
+            statusLight.classList.remove('connected');
+            statusText.textContent = 'Disconnected';
+
+            // Let the browser close it and then we retry with backoff.
+            try { es.close(); } catch (_) {}
+
+            const delay = Math.min(30000, 1000 * Math.pow(2, reconnectAttempts)); // 1s, 2s, 4s... up to 30s
+            reconnectAttempts++;
+            if (!reconnectTimer) {
+                reconnectTimer = setTimeout(connect, delay);
+            }
+        };
+    }
 
     let clickDataStore = {};
     let totalClicks = 0;
 
-    eventSource.onopen = function() {
-        console.log("Connection to SSE stream opened.");
-        // Don't set to 'Live' immediately. Wait for the first data event.
-        statusLight.classList.add('connected');
-        statusText.textContent = 'Connecting...';
-    };
+    // Start connection
+    connect();
 
-    eventSource.addEventListener('stats_update', function(event) {
-        // Now that we have data, we are truly 'Live'.
-        statusText.textContent = 'Live';
-        
-        const data = JSON.parse(event.data);
-        
-        const newDataStore = {};
-        let newTotalClicks = 0;
-        const incomingKeys = new Set();
-
-        data.forEach(item => {
-            const key = `${item.user_id}-${item.button_id}`;
-            newDataStore[key] = item;
-            newTotalClicks += parseInt(item.click_count, 10);
-            incomingKeys.add(key);
-        });
-        
-        clickDataStore = newDataStore;
-        totalClicks = newTotalClicks;
-
-        renderOrUpdateCards(incomingKeys);
+    // Clean up on page unload to prevent lingering connections on fast refresh/navigation
+    window.addEventListener('beforeunload', function() {
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+        }
+        if (es) {
+            try { es.close(); } catch (_) {}
+        }
     });
-
-    eventSource.onerror = function(err) {
-        console.error("EventSource failed:", err);
-        statusLight.classList.remove('connected');
-        statusText.textContent = 'Disconnected';
-        eventSource.close();
-    };
 
     function renderOrUpdateCards(incomingKeys) {
         // Update total clicks

@@ -2,9 +2,27 @@
 require_once __DIR__ . '/../../helpers/db.php';
 
 function stream_click_stats() {
+    // IMPORTANT: Release the session lock immediately to avoid blocking
+    // subsequent requests (e.g., page refresh establishing a new SSE).
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+
+    // Best-effort: disable gzip and buffering to stream promptly
+    if (function_exists('apache_setenv')) {
+        @apache_setenv('no-gzip', '1');
+    }
+    @ini_set('zlib.output_compression', '0');
+    @ini_set('output_buffering', 'off');
+
+    // Ensure any previously set content-type (e.g., application/json) is cleared
+    if (function_exists('header_remove')) {
+        @header_remove('Content-Type');
+    }
+
     // Set headers for Server-Sent Events
-    header('Content-Type: text/event-stream');
-    header('Cache-Control: no-cache');
+    header('Content-Type: text/event-stream; charset=utf-8');
+    header('Cache-Control: no-cache, no-transform');
     header('Connection: keep-alive');
     header('X-Accel-Buffering: no'); // Disable buffering for Nginx
 
