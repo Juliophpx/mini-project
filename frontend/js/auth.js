@@ -100,6 +100,11 @@ function clearSession() {
 }
 
 async function postLogout({ accessToken, refreshToken, csrfToken }) {
+    console.debug('Attempting logout with:', {
+        hasAccessToken: !!accessToken,
+        hasRefreshToken: !!refreshToken,
+        hasCsrfToken: !!csrfToken
+    });
     const response = await fetch(LOGOUT_URL, {
         method: 'POST',
         credentials: 'include',
@@ -132,7 +137,7 @@ window.handleLogout = async (event) => {
     event?.preventDefault?.();
 
     const accessToken = localStorage.getItem('token') || localStorage.getItem('access_token');
-    const refreshToken = getCookie('refresh_token');
+    const refreshToken = getCookie('refresh_token') || localStorage.getItem('refresh_token');
 
     if (!accessToken || !refreshToken) {
         clearSession();
