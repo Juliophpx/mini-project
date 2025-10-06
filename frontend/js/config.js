@@ -1,1 +1,1 @@
-const API_BASE_URL = 'http://127.0.0.1:8080/mini-project/backend/api/';
+const API_BASE_URL = 'https://juliophp.com/mini-project/backend/api/';
