@@ -12,11 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     eventSource.onopen = function() {
         console.log("Connection to SSE stream opened.");
+        // Don't set to 'Live' immediately. Wait for the first data event.
         statusLight.classList.add('connected');
-        statusText.textContent = 'Live';
+        statusText.textContent = 'Connecting...';
     };
 
     eventSource.addEventListener('stats_update', function(event) {
+        // Now that we have data, we are truly 'Live'.
+        statusText.textContent = 'Live';
+        
         const data = JSON.parse(event.data);
         
         const newDataStore = {};
