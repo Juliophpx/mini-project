@@ -7,29 +7,25 @@ function stream_click_stats() {
     header('Cache-Control: no-cache');
     header('Connection: keep-alive');
     header('X-Accel-Buffering: no'); // Disable buffering for Nginx
-
-    // Set a long execution time
-    set_time_limit(0);
     
+    // Tell the client to reconnect after 1 second if the connection is lost.
+    // This is a fallback for our time-limited script.
+    echo "retry: 1000\n";
+
+    // Set a time limit for the script, e.g., 55 seconds.
+    // This prevents runaway processes on the server.
+    $time_limit = 55;
+    set_time_limit($time_limit + 5); // Add a small buffer
+    $start_time = time();
+
     // Disable output buffering
-    if (ob_get_level()) {
-        ob_end_flush();
-    }
+    if (ob_get_level()) ob_end_flush();
     flush();
 
-    // Give the server a moment to establish the connection before the loop
-    sleep(2);
-
     $last_stats = null;
-    $last_heartbeat_time = time();
 
     try {
-        while (true) {
-            // Check if the client has disconnected
-            if (connection_aborted()) {
-                break;
-            }
-
+        while (time() - $start_time < $time_limit) {
             // Fetch the latest click stats
             $sql = "
                 SELECT 
@@ -47,27 +43,29 @@ function stream_click_stats() {
             $stmt = query($sql);
             $stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Send data only if it has changed
-            if (json_encode($stats) !== json_encode($last_stats)) {
+            $current_stats_json = json_encode($stats);
+            if ($current_stats_json !== json_encode($last_stats)) {
                 echo "event: stats_update\n";
-                echo "data: " . json_encode($stats) . "\n\n";
-                flush();
+                echo "data: " . $current_stats_json . "\n\n";
                 $last_stats = $stats;
-            }
-
-            // Send a heartbeat every 15 seconds to keep the connection alive
-            if (time() - $last_heartbeat_time > 15) {
+            } else {
+                // Send a comment as a heartbeat to keep the connection alive
                 echo ": heartbeat\n\n";
-                flush();
-                $last_heartbeat_time = time();
             }
 
-            // Wait for 1 second before the next loop iteration
-            sleep(1);
+            // Flush the output buffer to send the data to the client
+            if (flush() === false) {
+                // If flush returns false, the client has disconnected.
+                break;
+            }
+
+            // Wait for 2 seconds before the next loop iteration
+            sleep(2);
         }
     } catch (Exception $e) {
-        // Log any errors without breaking the client connection if possible
         error_log("SSE Error: " . $e->getMessage());
     }
+    // The script will naturally exit here when the time limit is reached.
+    // The client will automatically reconnect due to the 'retry' header.
 }
 ?>
