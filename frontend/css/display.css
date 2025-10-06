@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
+
+:root {
+    --electric-blue: #0A84FF;
+    --neon-green: #00E29B;
+    --bs-body-bg: #0B0F1A;
+    --bs-body-color: #F2F4F7;
+    --bs-border-color: #4B5563;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.total-clicks-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bs-gray-800);
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--bs-border-color);
+}
+
+.total-clicks-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--bs-secondary-color);
+}
+
+.total-clicks-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--neon-green);
+    font-family: 'Roboto Mono', monospace;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.status-light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--bs-secondary-color);
+    transition: background-color 0.3s;
+}
+
+.status-light.connected {
+    background-color: var(--neon-green);
+    box-shadow: 0 0 8px var(--neon-green);
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.main-subtitle {
+    font-size: 1.1rem;
+    color: var(--bs-secondary-color);
+}
+
+.data-card {
+    background-color: #1F2937; /* gray-800 */
+    border: 1px solid var(--bs-border-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Make cards in a row equal height */
+}
+
+.data-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.card-count {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    line-height: 1;
+}
+
+.card-user-info {
+    margin-top: auto;
+}
+
+.card-user-info .username {
+    font-weight: 600;
+    color: var(--electric-blue);
+}
+
+.card-user-info .timestamp {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8rem;
+}
+
+.back-link {
+    color: var(--electric-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}

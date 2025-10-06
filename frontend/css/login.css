@@ -1,0 +1,397 @@
+:root {
+    --brand-primary: #111;
+    --brand-blue: #7ac0e4;
+    --brand-blue-light: #7ac0e433;
+    --danger-color: #dc3545;
+    --success-color: #00C853;
+    --success-bg-color: rgba(0, 200, 83, 0.1);
+    --danger-bg-color: rgba(255, 76, 76, 0.1);
+    --text-primary: #111;
+    --text-secondary: #888;
+    --border-color: #eee;
+    --background-color: #fff;
+    --font-family-main: 'Inter', 'Massilia', Arial, sans-serif;
+    --font-family-light: 'Inter', 'Massilia Light', Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-family: var(--font-family-main);
+}
+
+h2 {
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    margin-top: 0.5rem;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.phone-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.fellow-input-group {
+    position: relative;
+}
+
+.fellow-input-group input,
+.custom-select-selected {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    background-color: var(--background-color) !important; /* Important needed for input */
+    outline: none;
+    font-family: var(--font-family-light);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.fellow-input-group input:focus,
+.custom-select-container.open .custom-select-selected {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 2px var(--brand-blue-light);
+}
+
+.fellow-input-group input::placeholder {
+    color: transparent;
+}
+
+.fellow-input-group label {
+    position: absolute;
+    left: 12px;
+    top: 16px;
+    padding: 0 6px;
+    font-family: var(--font-family-light);
+    font-size: 18px;
+    color: var(--text-secondary);
+    pointer-events: none;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    background: var(--background-color);
+}
+
+.fellow-input-group input:focus + label,
+.fellow-input-group input:not(:placeholder-shown) + label,
+.fellow-input-group .custom-select-container.open + label,
+.fellow-input-group .custom-select-container.has-value + label {
+    top: -10px;
+    font-size: 14px;
+    color: var(--brand-primary);
+}
+
+.fellow-input-group input:focus + label,
+.fellow-input-group .custom-select-container.open + label {
+    color: var(--brand-blue);
+}
+
+/* --- Custom Select Styles --- */
+.custom-select-container {
+    position: relative;
+}
+
+.custom-select-selected {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-secondary);
+}
+
+.custom-select-selected span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-select-arrow {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.custom-select-container.open .custom-select-arrow {
+    transform: rotate(180deg);
+}
+
+.custom-select-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--background-color);
+    border: 1.5px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.custom-select-container.open .custom-select-options {
+    display: block;
+}
+
+.custom-select-option {
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-family-light);
+    font-size: 18px;
+}
+
+.custom-select-option:hover {
+    background-color: #f4eadb;
+}
+
+.custom-select-option img,
+.custom-select-selected img {
+    width: 24px;
+    height: auto;
+}
+/* --- End Custom Select --- */
+
+/* --- Validation & Feedback --- */
+.fellow-input-group input.is-invalid {
+    border-color: var(--danger-color) !important;
+    box-shadow: 0 0 0 1px var(--danger-color) !important;
+}
+
+.invalid-feedback {
+    display: block;
+    color: var(--danger-color);
+    font-size: 14px;
+    margin-top: 4px;
+    font-family: 'Massilia Light';
+    text-align: left;
+}
+
+.fellow-input-group label.label-error {
+    color: var(--danger-color) !important;
+}
+
+.response-message {
+    font-family: 'Massilia Light';
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 4px; /* Using var(--Border-Radius-SM) would be better if defined */
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.response-message.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.response-message.error {
+    background-color: var(--danger-bg-color);
+    color: var(--danger-color);
+}
+
+.response-message.success {
+    background-color: var(--success-bg-color);
+    color: var(--success-color);
+}
+
+/* --- Verification & Display --- */
+.verification-section,
+#identifierDisplayWrapper {
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.verification-section.visible,
+#identifierDisplayWrapper.visible {
+    display: block; /* or flex for identifierDisplayWrapper */
+    opacity: 1;
+    transform: translateY(0);
+}
+#identifierDisplayWrapper.visible {
+    display: flex;
+}
+
+
+.verification-hint {
+    font-family: 'Massilia Light';
+    font-size: 14px;
+    color: var(--brand-primary);
+    opacity: 0.7;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+#verificationCode {
+    letter-spacing: 0.5em;
+    text-align: center;
+    font-size: 20px;
+}
+
+#identifierDisplayWrapper {
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 2rem;
+}
+#identifierDisplay {
+    font-family: var(--font-family-main);
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: -0.02em;
+    color: var(--brand-primary);
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+    display: block;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#editIdentifierBtn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s;
+    opacity: 0.85;
+}
+#editIdentifierBtn svg {
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+#editIdentifierBtn:hover {
+    opacity: 1;
+}
+
+/* --- Buttons & Spinners --- */
+.btn-primary-fellow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--brand-primary);
+    color: var(--background-color);
+    border: none;
+    border-radius: 16px;
+    padding: 12px 0;
+    font-family: 'Inter', Arial, sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.03em;
+    transition: all 0.3s ease;
+    width: 100%;
+    gap: 8px;
+}
+
+.btn-primary-fellow:hover,
+.btn-primary-fellow:focus {
+    background-color: var(--brand-primary);
+    color: var(--background-color);
+}
+
+.btn-primary-fellow:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid var(--background-color);
+    border-top: 2.5px solid var(--success-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    background: transparent;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* --- Utility --- */
+.hidden {
+    display: none !important;
+}
+
+/* --- Responsive --- */
+@media (max-width: 576px) {
+    #identifierDisplay {
+        font-size: 1.1rem;
+        max-width: 95vw;
+    }
+    .login-header { margin-bottom: 1.2rem; }
+    .login-brand-logo { width: 90%; }
+    body {
+        align-items: flex-start;
+        padding: 40px 15px;
+    }
+    .login-container {
+        padding: 24px;
+        width: 100%;
+    }
+    h2 {
+        font-size: 28px;
+        margin-bottom: 1.5rem;
+    }
+    .fellow-input-group input:not(:placeholder-shown) + label,
+    .fellow-input-group input:focus + label,
+    .fellow-input-group .custom-select-container.open + label,
+    .fellow-input-group .custom-select-container.has-value + label {
+        font-size: 12px;
+    }
+}
+
+.login-header {
+    margin-bottom: 2.2rem;
+}
+.login-brand-logo {
+    width: 50%;
+    max-width: 350px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.login-client-logo {
+    height: 38px;
+    max-width: 80vw;
+    object-fit: contain;
+    display: block;
+    background: #fff;
+    border-radius: 8px;
+    margin-bottom: 0.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 2px 8px;
+}

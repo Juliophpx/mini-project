@@ -1,0 +1,9 @@
+
+
+# Ignore environment files
+.env
+backend/api/.env
+
+# Ignore sensitive configuration files
+
+

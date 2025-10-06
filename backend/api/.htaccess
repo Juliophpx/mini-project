@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+    # Enable URL Rewriting
+    RewriteEngine On
+
+    # Do not apply to existing directories or files
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+
+    # Rewrite all other requests to index.php
+    # The [L] flag means that this is the last rule to be applied.
+    RewriteRule ^ index.php [L]
+</IfModule>
