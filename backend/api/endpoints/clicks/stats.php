@@ -81,8 +81,8 @@ function stream_click_stats() {
                 $last_heartbeat_time = time();
             }
 
-            // Wait for 2 seconds before the next loop to avoid overwhelming the server
-            sleep(2);
+            // Wait for 2 second before the next loop to avoid overwhelming the server
+            sleep(1);
         }
     } catch (Exception $e) {
         // Log any errors without breaking the client connection if possible
