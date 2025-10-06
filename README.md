@@ -1,11 +1,29 @@
 # ClickMindAI – Smarter insights from every click
 
+<p align="center">
+  <img src="frontend/img/clickmindai-logo.png" alt="ClickMindAI logo" width="220" />
+  <br />
+  <em>Smarter insights from every click</em>
+  <br /><br />
+</p>
+
 A minimalist full‑stack demo that tracks per‑user button clicks in real time, streams updates to a public display, and generates an AI insight from the data. Built with vanilla technologies for clarity and control: HTML/CSS/JS on the frontend and PHP/MySQL on the backend.
 
 - Live Dashboard (auth required): https://juliophp.com/mini-project/frontend/dashboard.html
 - Live Usage Display (public): https://juliophp.com/mini-project/frontend/display.html
 - API Base URL: https://juliophp.com/mini-project/backend/api/
 - Repository: https://github.com/Juliophpx/mini-project
+
+## Screenshots
+
+### Dashboard
+![Dashboard](frontend/img/dashboard.png)
+
+### Real‑Time Display
+![Real-time Display](frontend/img/display.png)
+
+### AI Insight
+![AI Insight](frontend/img/ai.png)
 
 ## What this project demonstrates
 
