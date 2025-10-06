@@ -8,8 +8,11 @@ function stream_click_stats() {
     header('Connection: keep-alive');
     header('X-Accel-Buffering: no'); // Disable buffering for Nginx
 
-    // Set a long execution time
-    set_time_limit(0);
+    // Set a long execution time, but not infinite, to prevent runaways
+    set_time_limit(300); // 5 minutes, for example
+
+    // Ignore user aborts and allow the script to run its course
+    ignore_user_abort(true);
     
     // Disable output buffering
     if (ob_get_level()) {
@@ -21,7 +24,10 @@ function stream_click_stats() {
     // Enviar un evento de conexión inicial para abrir el stream inmediatamente
     echo "event: connected\n";
     echo "data: {\"message\": \"Connection established\"}\n\n";
-    flush();
+    if (flush() === false) {
+        // Exit if client has disconnected
+        exit;
+    }
     // >>> FIN DEL CAMBIO <<<
 
     $last_stats = null;
@@ -29,10 +35,8 @@ function stream_click_stats() {
 
     try {
         while (true) {
-            // Check if the client has disconnected
-            if (connection_aborted()) {
-                break;
-            }
+            // Instead of checking connection_aborted(), we'll check the return value of flush()
+            // which is a more reliable way to see if the client is still connected.
 
             // Fetch the latest click stats
             $sql = "
@@ -55,14 +59,18 @@ function stream_click_stats() {
             if (json_encode($stats) !== json_encode($last_stats)) {
                 echo "event: stats_update\n";
                 echo "data: " . json_encode($stats) . "\n\n";
-                flush();
+                if (flush() === false) {
+                    break; // Exit loop if client is disconnected
+                }
                 $last_stats = $stats;
             }
 
             // Send a heartbeat every 15 seconds to keep the connection alive
             if (time() - $last_heartbeat_time > 15) {
                 echo ": heartbeat\n\n";
-                flush();
+                if (flush() === false) {
+                    break; // Exit loop if client is disconnected
+                }
                 $last_heartbeat_time = time();
             }
 
